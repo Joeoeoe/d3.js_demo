@@ -4,18 +4,19 @@
 <head>
     <meta charset='UTF-8'>
     <title></title>
-    <script src="./build/d3.js"></script>
+    <script src="../d3_library/d3.js"></script>
+    <style>
+        
+    </style>
 </head>
 
 <body>
+
     <svg class="chart">
 
     </svg>
-    <script>
-        const width = 1366;
-        const height = 580;
-        const radius = width / 2;
 
+    <script>
         const data = {
             name: "root",
             children: [
@@ -47,21 +48,17 @@
                 }
             ]
         };
+        console.log('——————input data——————');
+        console.log(data);
+
+        const width = 1366;
+        const height = 580;
 
         const svg = d3.select('.chart')
             .attr('width', width)
             .attr('height', height);
 
         const g = svg.append('g').attr('transform', 'translate(0, 20)');
-
-        //d3.tree()返回tree layout,后续链式写法对layout进行配置
-        const treeLayout = d3.tree()
-            .size([width, height - 30])
-            .separation((a, b) => {
-                return a.parent === b.parent ? 8 : 10;
-            });
-        console.log("——————treeLayout——————");
-        console.log(treeLayout);
 
 
         //将数据结构化, 返回后的node节点及其后代均有如下属性
@@ -70,6 +67,16 @@
         console.log("——————d3.hierarchy(data)——————");
         console.log(hierarchyData);
 
+
+
+        //d3.tree()返回tree layout,后续链式写法对layout进行配置
+        const treeLayout = d3.tree()
+            .size([width, height - 30])
+            .separation((a, b) => {
+                return a.parent === b.parent ? 1 : 2;
+            });
+        console.log("——————treeLayout——————");
+        console.log(treeLayout);
 
         //将数据扔进layout,获取更易于布局的数据nodesData, 相对hierarchyData, 所有数据加上了.x,.y属性
         const nodesData = treeLayout(hierarchyData);
@@ -92,7 +99,7 @@
                 ${d.parent.x},${d.parent.y}`;
             });
 
-        const node = g.selectAll('.node')
+        const nodes = g.selectAll('.node')
             .data(nodesData.descendants())
             .enter().append('g')
             .attr('transform', (d) => {
@@ -100,14 +107,14 @@
             });
 
         //画圆 
-        node.append('circle')
+        nodes.append('circle')
             .style('fill', '#c03027')
             .attr('r', 10);
 
         //插入文字
-        node.append('text')
+        nodes.append('text')
             .attr('dx', '.9em')
-            .text((d)=>{
+            .text((d) => {
                 return d.data.name;
             });
     </script>
