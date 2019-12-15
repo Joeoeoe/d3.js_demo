@@ -26,6 +26,8 @@
         .attr("height", svgHeight)
         .attr("width", svgWidth);
 
+    const mapContainer = svg.append("g"); //添加mapContainer装载地图绘制内容
+
     /** 
      * 获取投影，并配置
      */
@@ -48,7 +50,7 @@
     /** 
      * 利用pathGenerator与features生成path路径，绘制地图
      */
-    const mapPath = svg.selectAll("path")
+    const mapPath = mapContainer.selectAll("path")
         .data(BeijingGeoJson.features) //数据绑定
         .join("path")
         .attr("d", pathGenerator) //绘制path
@@ -58,14 +60,13 @@
 
     function zoomed() {
         const t = d3.event.transform;
-        console.log(d3.event.sourceEvent);
-        svg.attr("transform", `translate(${t.x}, ${t.y}) scale(${t.k})`);
+        mapContainer.attr("transform", `translate(${t.x}, ${t.y}) scale(${t.k})`); //改变mapContainer的位置及缩放
     }
     const zoom = d3.zoom()
-                   .scaleExtent([1, 3])  //设置监听范围
-                   .on("zoom", zoomed);  //设置监听事件
-    
-    svg.call(zoom); //应用
+        .scaleExtent([1, 3])  //设置监听范围
+        .on("zoom", zoomed);  //设置监听事件
+
+    svg.call(zoom); //仍然应用于svg上，但是事件触发时改变的是
 
 </script>
 
