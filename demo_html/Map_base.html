@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <title></title>
+    <script src="../d3_library/d3.js"></script>
+    <!-- 将BeijingGeoJson文件以js对象放在js文件中，输出变量为BeijingGeoJson -->
+    <script src="../source/js/BeijingGeo.js"></script>
+</head>
+
+<body>
+    <svg class="chart">
+
+    </svg>
+</body>
+<script>
+    /**
+     * 基本配置 
+     */
+    const svgWidth = 500;
+    const svgHeight = 500;
+    const padding = 30;
+
+    const svg = d3.select(".chart")
+        .attr("height", svgHeight)
+        .attr("width", svgWidth);
+
+    /** 
+     * 获取投影，并配置
+     */
+    const x0 = padding;
+    const y0 = padding;
+    const x1 = svgWidth - padding * 2;
+    const y1 = svgHeight - padding * 2;
+    const projection = d3.geoMercator().fitExtent(
+        [
+            [x0, y0], //左上角坐标
+            [x1, y1], //右下角坐标
+        ], BeijingGeoJson);
+    console.log(projection);
+
+    /**
+     * 获取geographic path generator，并配置
+     */
+    const pathGenerator = d3.geoPath().projection(projection);
+
+    /** 
+     * 利用pathGenerator与features生成path路径，绘制地图
+     */
+    const mapPath = svg.selectAll("path")
+        .data(BeijingGeoJson.features) //数据绑定
+        .join("path")
+        .attr("d", pathGenerator) //绘制path
+        .attr("stroke-width", 0.5)
+        .attr("stroke", "#000000")
+        .attr("fill", "#ffffff");
+
+</script>
+
+</html>
